@@ -1,18 +1,15 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Onboarding from './Onboarding';
 
 const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const profile = localStorage.getItem('userProfile');
-    if (profile) {
-      navigate('/dashboard');
-    }
+    // Always redirect to home - settings modal will handle first-time users
+    navigate('/home');
   }, [navigate]);
 
-  return <Onboarding />;
+  return null;
 };
 
 export default Index;

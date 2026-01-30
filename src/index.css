@@ -2,19 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
     /* Core palette - Pastel mint & white */
     --background: 150 30% 98%;
-    --foreground: 160 10% 20%;
+    --foreground: 0 0% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 160 10% 20%;
+    --card-foreground: 0 0% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 160 10% 20%;
+    --popover-foreground: 0 0% 15%;
 
     /* Mint green primary */
     --primary: 156 50% 72%;
@@ -22,15 +22,15 @@
 
     /* Lighter mint secondary */
     --secondary: 156 40% 92%;
-    --secondary-foreground: 160 15% 25%;
+    --secondary-foreground: 0 0% 25%;
 
     /* Soft grey muted */
     --muted: 150 15% 94%;
-    --muted-foreground: 160 8% 50%;
+    --muted-foreground: 0 0% 45%;
 
     /* Accent mint */
     --accent: 156 45% 85%;
-    --accent-foreground: 160 20% 20%;
+    --accent-foreground: 0 0% 20%;
 
     --destructive: 0 72% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -72,26 +72,26 @@
   }
 
   .dark {
-    --background: 160 15% 10%;
-    --foreground: 150 20% 95%;
+    --background: 160 15% 8%;
+    --foreground: 0 0% 92%;
 
     --card: 160 15% 12%;
-    --card-foreground: 150 20% 95%;
+    --card-foreground: 0 0% 92%;
 
     --popover: 160 15% 12%;
-    --popover-foreground: 150 20% 95%;
+    --popover-foreground: 0 0% 92%;
 
     --primary: 156 45% 55%;
     --primary-foreground: 160 20% 10%;
 
     --secondary: 160 20% 18%;
-    --secondary-foreground: 150 20% 90%;
+    --secondary-foreground: 0 0% 85%;
 
     --muted: 160 15% 20%;
-    --muted-foreground: 150 10% 60%;
+    --muted-foreground: 0 0% 60%;
 
     --accent: 156 30% 25%;
-    --accent-foreground: 150 20% 95%;
+    --accent-foreground: 0 0% 92%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
@@ -117,12 +117,13 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', sans-serif;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Lora', 'Times New Roman', Georgia, serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
+    font-family: 'Lora', 'Times New Roman', Georgia, serif;
   }
 }
 
@@ -165,6 +166,53 @@
   .health-card {
     @apply p-4 rounded-2xl bg-card border border-border/50;
     box-shadow: var(--shadow-card);
+  }
+
+  /* Floating Leaf Animation */
+  @keyframes float-leaf {
+    0%, 100% {
+      transform: translateY(0) translateX(0) rotate(0deg);
+      opacity: 0.4;
+    }
+    25% {
+      transform: translateY(-20px) translateX(10px) rotate(10deg);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateY(-40px) translateX(-5px) rotate(-5deg);
+      opacity: 0.5;
+    }
+    75% {
+      transform: translateY(-20px) translateX(15px) rotate(15deg);
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes float-leaf-slow {
+    0%, 100% {
+      transform: translateY(0) translateX(0) rotate(0deg);
+      opacity: 0.3;
+    }
+    33% {
+      transform: translateY(-30px) translateX(-15px) rotate(-10deg);
+      opacity: 0.5;
+    }
+    66% {
+      transform: translateY(-15px) translateX(10px) rotate(5deg);
+      opacity: 0.4;
+    }
+  }
+
+  .animate-float-leaf {
+    animation: float-leaf 8s ease-in-out infinite;
+  }
+
+  .animate-float-leaf-slow {
+    animation: float-leaf-slow 12s ease-in-out infinite;
+  }
+
+  .animate-float-leaf-delayed {
+    animation: float-leaf 10s ease-in-out 2s infinite;
   }
 }
 

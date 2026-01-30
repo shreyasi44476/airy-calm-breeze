@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        serif: ['Lora', 'Times New Roman', 'Georgia', 'serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -57,6 +60,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        aqi: {
+          good: "hsl(var(--aqi-good))",
+          moderate: "hsl(var(--aqi-moderate))",
+          "unhealthy-sensitive": "hsl(var(--aqi-unhealthy-sensitive))",
+          unhealthy: "hsl(var(--aqi-unhealthy))",
+          "very-unhealthy": "hsl(var(--aqi-very-unhealthy))",
+          hazardous: "hsl(var(--aqi-hazardous))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -80,10 +91,51 @@ export default {
             height: "0",
           },
         },
+        "fade-in": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(10px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        "scale-in": {
+          "0%": {
+            transform: "scale(0.95)",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "scale(1)",
+            opacity: "1",
+          },
+        },
+        "float-leaf": {
+          "0%, 100%": {
+            transform: "translateY(0) translateX(0) rotate(0deg)",
+            opacity: "0.4",
+          },
+          "25%": {
+            transform: "translateY(-20px) translateX(10px) rotate(10deg)",
+            opacity: "0.6",
+          },
+          "50%": {
+            transform: "translateY(-40px) translateX(-5px) rotate(-5deg)",
+            opacity: "0.5",
+          },
+          "75%": {
+            transform: "translateY(-20px) translateX(15px) rotate(15deg)",
+            opacity: "0.6",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in": "fade-in 0.3s ease-out forwards",
+        "scale-in": "scale-in 0.2s ease-out forwards",
+        "float-leaf": "float-leaf 8s ease-in-out infinite",
       },
     },
   },
