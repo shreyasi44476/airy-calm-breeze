@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { MapPin, RefreshCw } from 'lucide-react';
 import AQICircle from '@/components/AQICircle';
-import WeeklyTrendChart from '@/components/WeeklyTrendChart';
+import WeeklyBarChart from '@/components/WeeklyBarChart';
+import AQILegend from '@/components/AQILegend';
 import BottomNav from '@/components/BottomNav';
+import ThemeToggle from '@/components/ThemeToggle';
+import AnimatedLeafBackground from '@/components/AnimatedLeafBackground';
 import { activitySuggestions, getAQICategory } from '@/lib/aqiData';
 
 const AQIOverview = () => {
@@ -43,9 +46,12 @@ const AQIOverview = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-24 relative">
+      <AnimatedLeafBackground />
+      <ThemeToggle />
+
       {/* Header */}
-      <div className="pt-12 pb-4 px-6">
+      <div className="relative z-10 pt-20 pb-4 px-6">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-muted-foreground">Current Location</p>
@@ -67,29 +73,34 @@ const AQIOverview = () => {
       </div>
 
       {/* Main AQI Display */}
-      <div className="flex flex-col items-center py-8">
+      <div className="relative z-10 flex flex-col items-center py-6">
         <AQICircle value={aqiValue} />
         
         {/* Activity Suggestion */}
-        <div className="mt-8 px-6 text-center max-w-sm mx-auto">
+        <div className="mt-6 px-6 text-center max-w-sm mx-auto">
           <p className="text-base text-foreground font-medium animate-fade-in">
             {suggestion}
           </p>
         </div>
 
         {/* Last Updated */}
-        <p className="text-xs text-muted-foreground mt-4">
+        <p className="text-xs text-muted-foreground mt-3">
           Last updated at {lastUpdated}
         </p>
       </div>
 
-      {/* Weekly Trend */}
-      <div className="px-6 mt-4">
-        <WeeklyTrendChart />
+      {/* Weekly Trend - Bar Chart */}
+      <div className="relative z-10 px-6 mt-4">
+        <WeeklyBarChart />
+      </div>
+
+      {/* AQI Legend */}
+      <div className="relative z-10 px-6 mt-4">
+        <AQILegend />
       </div>
 
       {/* Quick Stats */}
-      <div className="px-6 mt-6">
+      <div className="relative z-10 px-6 mt-4">
         <div className="grid grid-cols-3 gap-3">
           <div className="card-elevated text-center py-4">
             <p className="text-xl font-bold text-foreground">38</p>
