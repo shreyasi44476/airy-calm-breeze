@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { MapPin, RefreshCw } from 'lucide-react';
 import AQICircle from '@/components/AQICircle';
 import WeeklyBarChart from '@/components/WeeklyBarChart';
@@ -6,13 +6,17 @@ import AQILegend from '@/components/AQILegend';
 import BottomNav from '@/components/BottomNav';
 import ThemeToggle from '@/components/ThemeToggle';
 import AnimatedLeafBackground from '@/components/AnimatedLeafBackground';
+import AQISpikeAlert from '@/components/AQISpikeAlert';
 import { activitySuggestions, getAQICategory } from '@/lib/aqiData';
 
 const AQIOverview = () => {
   const [aqiValue, setAqiValue] = useState(72);
+  const [previousAQI, setPreviousAQI] = useState(72);
   const [suggestion, setSuggestion] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [userCity, setUserCity] = useState('New Delhi');
+  const [showSpikeAlert, setShowSpikeAlert] = useState(false);
+  const lastAlertedAQI = useRef(72);
 
   useEffect(() => {
     const profile = localStorage.getItem('userProfile');
@@ -30,11 +34,35 @@ const AQIOverview = () => {
     setSuggestion(suggestions[Math.floor(Math.random() * suggestions.length)]);
   }, [aqiValue]);
 
+  // Check for significant AQI increase
+  const checkForSpikeAlert = useCallback((newAQI: number, oldAQI: number) => {
+    const increase = newAQI - oldAQI;
+    const oldCategory = getAQICategory(oldAQI).category;
+    const newCategory = getAQICategory(newAQI).category;
+    const categoryChanged = oldCategory !== newCategory && newAQI > oldAQI;
+    
+    // Only alert if increase >= 20 OR category worsened
+    // And avoid repeated alerts for same spike
+    if ((increase >= 20 || categoryChanged) && newAQI > lastAlertedAQI.current) {
+      lastAlertedAQI.current = newAQI;
+      setShowSpikeAlert(true);
+    }
+  }, []);
+
+  const handleCloseAlert = useCallback(() => {
+    setShowSpikeAlert(false);
+  }, []);
+
   const handleRefresh = () => {
     setIsRefreshing(true);
+    const currentAQI = aqiValue;
+    
     // Simulate API call
     setTimeout(() => {
-      setAqiValue(Math.floor(Math.random() * 150) + 30);
+      const newAQI = Math.floor(Math.random() * 150) + 30;
+      setPreviousAQI(currentAQI);
+      setAqiValue(newAQI);
+      checkForSpikeAlert(newAQI, currentAQI);
       setIsRefreshing(false);
     }, 1000);
   };
@@ -49,6 +77,14 @@ const AQIOverview = () => {
     <div className="min-h-screen bg-background pb-24 relative">
       <AnimatedLeafBackground />
       <ThemeToggle />
+      
+      {/* AQI Spike Alert */}
+      <AQISpikeAlert
+        isVisible={showSpikeAlert}
+        previousAQI={previousAQI}
+        currentAQI={aqiValue}
+        onClose={handleCloseAlert}
+      />
 
       {/* Header */}
       <div className="relative z-10 pt-20 pb-4 px-6">

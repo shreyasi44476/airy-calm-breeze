@@ -220,4 +220,46 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* AQI Spike Alert Styles - Muted Red */
+  .aqi-spike-alert {
+    @apply bg-[hsl(0_30%_94%)] text-[hsl(0_40%_25%)] border-[hsl(0_25%_85%)];
+  }
+
+  .aqi-spike-icon {
+    @apply bg-[hsl(0_35%_88%)] text-[hsl(0_45%_40%)];
+  }
+
+  .aqi-spike-close {
+    @apply bg-[hsl(0_30%_88%)] text-[hsl(0_40%_35%)];
+  }
+
+  .aqi-spike-progress {
+    @apply bg-[hsl(0_40%_60%)];
+  }
+
+  .dark .aqi-spike-alert {
+    @apply bg-[hsl(0_25%_22%)] text-[hsl(0_20%_85%)] border-[hsl(0_20%_30%)];
+  }
+
+  .dark .aqi-spike-icon {
+    @apply bg-[hsl(0_25%_28%)] text-[hsl(0_30%_70%)];
+  }
+
+  .dark .aqi-spike-close {
+    @apply bg-[hsl(0_25%_28%)] text-[hsl(0_25%_75%)];
+  }
+
+  .dark .aqi-spike-progress {
+    @apply bg-[hsl(0_35%_55%)];
+  }
+
+  @keyframes shrink-progress {
+    from {
+      width: 100%;
+    }
+    to {
+      width: 0%;
+    }
+  }
 }
