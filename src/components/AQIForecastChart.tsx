@@ -9,6 +9,7 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { getAQICategory } from '@/lib/aqiData';
+import type { TooltipProps, DotProps } from 'recharts';
 import { Sparkles } from 'lucide-react';
 
 interface ForecastDay {
@@ -62,16 +63,20 @@ const generateInsight = (forecast: ForecastDay[]): string => {
   return `📈 Air quality will remain relatively stable over the coming week with minor fluctuations.`;
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
-    const aqiData = getAQICategory(payload[0].value);
+    // Strongly-typed payload extraction to avoid `any`
+    type PayloadItem = { value?: number };
+    const first = payload[0] as unknown as PayloadItem;
+    const value = typeof first.value === 'number' ? first.value : 0;
+    const aqiData = getAQICategory(value);
     return (
       <div className="bg-card px-3 py-2 rounded-lg shadow-card border border-border">
         <p className="text-sm font-medium text-foreground">{label}</p>
         <p className="text-xs text-muted-foreground">
           Predicted AQI:{' '}
           <span className="font-semibold" style={{ color: aqiData.color }}>
-            {payload[0].value}
+            {value}
           </span>
         </p>
       </div>
@@ -80,9 +85,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const CustomDot = (props: any) => {
-  const { cx, cy, payload } = props;
-  const aqiData = getAQICategory(payload.aqi);
+const CustomDot = ({ cx, cy, payload }: { cx?: number; cy?: number; payload?: { aqi: number } }) => {
+  const aqiValue = payload?.aqi ?? 0;
+  const aqiData = getAQICategory(aqiValue);
   
   return (
     <circle

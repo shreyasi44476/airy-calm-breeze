@@ -1,13 +1,15 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import type { TooltipProps, LegendProps } from 'recharts';
 import { pollutantData } from '@/lib/aqiData';
 
-const CustomTooltip = ({ active, payload }: any) => {
+const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
+    const first = payload[0] as unknown as { name?: string; value?: number };
     return (
       <div className="bg-card px-3 py-2 rounded-lg shadow-card border border-border">
-        <p className="text-sm font-medium text-foreground">{payload[0].name}</p>
+        <p className="text-sm font-medium text-foreground">{first.name}</p>
         <p className="text-xs text-muted-foreground">
-          Contribution: <span className="font-semibold">{payload[0].value}%</span>
+          Contribution: <span className="font-semibold">{first.value}%</span>
         </p>
       </div>
     );
@@ -15,19 +17,22 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-const renderCustomLegend = (props: any) => {
-  const { payload } = props;
+const renderCustomLegend = (props: LegendProps) => {
+  const payload = props.payload ?? [];
   return (
     <div className="flex flex-wrap justify-center gap-3 mt-4">
-      {payload.map((entry: any, index: number) => (
-        <div key={index} className="flex items-center gap-1.5">
-          <div
-            className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: entry.color }}
-          />
-          <span className="text-xs text-muted-foreground">{entry.value}</span>
-        </div>
-      ))}
+      {payload.map((entry, index) => {
+        const e = entry as { value?: string | number; color?: string };
+        return (
+          <div key={index} className="flex items-center gap-1.5">
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: e.color }}
+            />
+            <span className="text-xs text-muted-foreground">{e.value}</span>
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -7,16 +7,19 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
+import type { TooltipProps } from 'recharts';
 import { weeklyAQIData, getAQICategory } from '@/lib/aqiData';
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
-    const aqiData = getAQICategory(payload[0].value);
+    const first = payload[0] as unknown as { value?: number };
+    const value = typeof first.value === 'number' ? first.value : 0;
+    const aqiData = getAQICategory(value);
     return (
       <div className="bg-card px-3 py-2 rounded-lg shadow-card border border-border">
         <p className="text-sm font-medium text-foreground">{label}</p>
         <p className="text-xs text-muted-foreground">
-          AQI: <span className="font-semibold" style={{ color: aqiData.color }}>{payload[0].value}</span>
+          AQI: <span className="font-semibold" style={{ color: aqiData.color }}>{value}</span>
         </p>
       </div>
     );

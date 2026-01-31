@@ -4,7 +4,7 @@ import { Home, Activity, Heart, PieChart, AlertTriangle } from 'lucide-react';
 const navItems = [
   { path: '/home', icon: Home, label: 'Home' },
   { path: '/aqi', icon: Activity, label: 'AQI' },
-  { path: '/health', icon: Heart, label: 'Health' },
+  { path: '/health-tracker', icon: Heart, label: 'Health' },
   { path: '/pollutants', icon: PieChart, label: 'Pollutants' },
   { path: '/report', icon: AlertTriangle, label: 'Report' },
 ];

@@ -1,5 +1,7 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { MapPin, RefreshCw } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef, type FC } from 'react';
+import { MapPin, RefreshCw, Shield } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import AQICircle from '@/components/AQICircle';
 import WeeklyBarChart from '@/components/WeeklyBarChart';
 import AQILegend from '@/components/AQILegend';
@@ -8,29 +10,37 @@ import ThemeToggle from '@/components/ThemeToggle';
 import AnimatedLeafBackground from '@/components/AnimatedLeafBackground';
 import AQISpikeAlert from '@/components/AQISpikeAlert';
 import { activitySuggestions, getAQICategory } from '@/lib/aqiData';
-
-const AQIOverview = () => {
+const AQIOverview: FC = () => {
   const [aqiValue, setAqiValue] = useState(72);
   const [previousAQI, setPreviousAQI] = useState(72);
-  const [suggestion, setSuggestion] = useState('');
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [userCity, setUserCity] = useState('New Delhi');
+  const [suggestion, setSuggestion] = useState<string>('');
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [userCity, setUserCity] = useState<string>('New Delhi');
   const [showSpikeAlert, setShowSpikeAlert] = useState(false);
   const lastAlertedAQI = useRef(72);
 
+  // Toast and alert bookkeeping
+  const { toast } = useToast();
+  const prevAqiRef = useRef<number | null>(null);
+  const lastAlertRef = useRef<{ aqi: number; category: string } | null>(null);
+
   useEffect(() => {
-    const profile = localStorage.getItem('userProfile');
-    if (profile) {
-      const parsed = JSON.parse(profile);
-      if (parsed.city) {
-        setUserCity(parsed.city);
+    try {
+      const profile = localStorage.getItem('userProfile');
+      if (profile) {
+        const parsed = JSON.parse(profile);
+        if (parsed && typeof parsed.city === 'string') {
+          setUserCity(parsed.city);
+        }
       }
+    } catch (e) {
+      // Ignore malformed profile data
     }
   }, []);
 
   useEffect(() => {
     const category = getAQICategory(aqiValue).category;
-    const suggestions = activitySuggestions[category];
+    const suggestions = activitySuggestions[category] ?? ['Monitor local conditions and take precautions.'];
     setSuggestion(suggestions[Math.floor(Math.random() * suggestions.length)]);
   }, [aqiValue]);
 
@@ -53,7 +63,44 @@ const AQIOverview = () => {
     setShowSpikeAlert(false);
   }, []);
 
-  const handleRefresh = () => {
+  // Show a calm, non-intrusive alert when AQI increases significantly
+  useEffect(() => {
+    // If we don't have a previous value yet, just store and return
+    if (prevAqiRef.current === null) {
+      prevAqiRef.current = aqiValue;
+      return;
+    }
+
+    const diff = aqiValue - (prevAqiRef.current as number);
+    const oldCategory = getAQICategory(prevAqiRef.current as number).category;
+    const newCategory = getAQICategory(aqiValue).category;
+
+    const categories = ['good', 'moderate', 'unhealthySensitive', 'unhealthy', 'veryUnhealthy', 'hazardous'];
+    const oldIdx = categories.indexOf(oldCategory);
+    const newIdx = categories.indexOf(newCategory);
+
+    // Trigger rules: increase by 20+ OR crossing into a worse category
+    const shouldTrigger = diff >= 20 || newIdx > oldIdx;
+
+    const lastAlert = lastAlertRef.current;
+    // Don't repeat alerts for small oscillations: require >=10 further points OR worsened category compared to last alert
+    const notRecentlyAlerted = !lastAlert || aqiValue >= lastAlert.aqi + 10 || newIdx > categories.indexOf(lastAlert.category);
+
+    if (shouldTrigger && notRecentlyAlerted) {
+      toast({
+        title: '⚠️ AQI has increased in your area',
+        description: `AQI rose from ${prevAqiRef.current} to ${aqiValue}. Consider limiting outdoor activity.`,
+        duration: 4500, // auto-dismiss after ~4.5s
+        variant: 'alert',
+      });
+
+      lastAlertRef.current = { aqi: aqiValue, category: newCategory };
+    }
+
+    prevAqiRef.current = aqiValue;
+  }, [aqiValue, toast]);
+
+const handleRefresh = () => {
     setIsRefreshing(true);
     const currentAQI = aqiValue;
     
@@ -94,9 +141,31 @@ const AQIOverview = () => {
             <div className="flex items-center gap-1.5 mt-1">
               <MapPin className="w-4 h-4 text-primary" />
               <h1 className="text-lg font-semibold text-foreground">{userCity}</h1>
+
+              {/* Verification Badge: subtle & accessible */}
+              <div className="ml-3">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      aria-label="Verified Government AQI Data"
+                      className={"inline-flex items-center gap-2 rounded-full px-2 py-0.5 text-xs font-medium transition-shadow focus:outline-none " +
+                        "bg-emerald-50 text-emerald-800 border border-emerald-100 dark:bg-emerald-900/40 dark:text-emerald-200 dark:border-emerald-700"}
+                    >
+                      <Shield className="w-4 h-4" />
+                      <span className="whitespace-nowrap">Verified Govt AQI</span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" align="start" className="max-w-xs">
+                    <p className="text-sm text-muted-foreground">
+                      Verified government sources: CPCB, State Pollution Control Boards (SPCBs), and official local monitoring stations.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </div>
           </div>
           <button
+            aria-label="Refresh AQI"
             onClick={handleRefresh}
             disabled={isRefreshing}
             className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors"
@@ -152,7 +221,6 @@ const AQIOverview = () => {
           </div>
         </div>
       </div>
-
       <BottomNav />
     </div>
   );

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Shield } from 'lucide-react';
 import HealthCard from '@/components/HealthCard';
 import BottomNav from '@/components/BottomNav';
@@ -7,6 +8,7 @@ import AnimatedLeafBackground from '@/components/AnimatedLeafBackground';
 import { healthRecommendations, getAQICategory } from '@/lib/aqiData';
 
 const HealthRecommendations = () => {
+  const navigate = useNavigate();
   const [aqiValue] = useState(72);
   const aqiData = getAQICategory(aqiValue);
   const recommendations = healthRecommendations[aqiData.category];
@@ -78,16 +80,22 @@ const HealthRecommendations = () => {
 
       {/* Header */}
       <div className="relative z-10 pt-20 pb-6 px-6">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl gradient-mint-bg flex items-center justify-center shadow-soft">
-            <Shield className="w-6 h-6 text-primary-foreground" />
+        <div className="flex items-center gap-3 justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl gradient-mint-bg flex items-center justify-center shadow-soft">
+              <Shield className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-foreground">Health Guide</h1>
+              <p className="text-sm text-muted-foreground">
+                {userName ? `Personalized for ${userName}` : 'Based on current AQI'}
+                {userAge && ` (Age ${userAge})`}
+              </p>
+            </div>
           </div>
+
           <div>
-            <h1 className="text-xl font-bold text-foreground">Health Guide</h1>
-            <p className="text-sm text-muted-foreground">
-              {userName ? `Personalized for ${userName}` : 'Based on current AQI'}
-              {userAge && ` (Age ${userAge})`}
-            </p>
+            <button onClick={() => navigate('/health-tracker')} className="text-sm btn-primary px-3 py-2">Open Personal Tracker</button>
           </div>
         </div>
       </div>

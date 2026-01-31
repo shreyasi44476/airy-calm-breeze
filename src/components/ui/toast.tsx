@@ -14,7 +14,8 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      // Position to top-right (just below navbar) and stack to the column
+      "fixed top-16 right-4 z-[100] flex max-h-screen flex-col p-4 space-y-2 md:max-w-[420px]",
       className,
     )}
     {...props}
@@ -29,6 +30,9 @@ const toastVariants = cva(
       variant: {
         default: "border bg-background text-foreground",
         destructive: "destructive group border-destructive bg-destructive text-destructive-foreground",
+        // Soft, muted red 'alert' variant (calm, accessible in both light & dark)
+        alert:
+          "alert group border-red-100 bg-red-50 text-red-900 dark:border-red-700 dark:bg-red-900/80 dark:text-red-50",
       },
     },
     defaultVariants: {
@@ -36,7 +40,6 @@ const toastVariants = cva(
     },
   },
 );
-
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> & VariantProps<typeof toastVariants>
@@ -67,7 +70,9 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity group-hover:opacity-100 group-[.destructive]:text-red-300 hover:text-foreground group-[.destructive]:hover:text-red-50 focus:opacity-100 focus:outline-none focus:ring-2 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
+      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity group-hover:opacity-100 group-[.destructive]:text-red-300 hover:text-foreground group-[.destructive]:hover:text-red-50 focus:opacity-100 focus:outline-none focus:ring-2 group-[.destructive]:focus:ring-destructive group-[.destructive]:focus:ring-offset-destructive " +
+        // Ensure the close button is visible and harmonious for the 'alert' variant
+        "group-[.alert]:text-red-200 group-[.alert]:hover:text-red-50 group-[.alert]:focus:ring-red-400 group-[.alert]:focus:ring-offset-red-600",
       className,
     )}
     toast-close=""

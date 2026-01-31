@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Home from "./pages/Home";
 import AQIOverview from "./pages/AQIOverview";
 import HealthRecommendations from "./pages/HealthRecommendations";
+import HealthTracker from "./pages/HealthTracker";
 import PollutantBreakdown from "./pages/PollutantBreakdown";
 import ReportEvent from "./pages/ReportEvent";
 import NotFound from "./pages/NotFound";
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/home" element={<Home />} />
           <Route path="/aqi" element={<AQIOverview />} />
           <Route path="/health" element={<HealthRecommendations />} />
+          <Route path="/health-tracker" element={<HealthTracker />} />
           <Route path="/pollutants" element={<PollutantBreakdown />} />
           <Route path="/report" element={<ReportEvent />} />
           <Route path="*" element={<NotFound />} />
