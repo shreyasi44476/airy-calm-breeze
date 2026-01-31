@@ -1,11 +1,11 @@
-import { Wind } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import PollutantPieChart from '@/components/PollutantPieChart';
 import LocalFactorTag from '@/components/LocalFactorTag';
-import GaseousPollutants from '@/components/GaseousPollutants';
+import AQIForecastChart from '@/components/AQIForecastChart';
 import BottomNav from '@/components/BottomNav';
 import ThemeToggle from '@/components/ThemeToggle';
 import AnimatedLeafBackground from '@/components/AnimatedLeafBackground';
-import { pollutantData, localFactors } from '@/lib/aqiData';
+import { localFactors } from '@/lib/aqiData';
 
 const PollutantBreakdown = () => {
   return (
@@ -17,54 +17,24 @@ const PollutantBreakdown = () => {
       <div className="relative z-10 pt-20 pb-6 px-6">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-xl gradient-mint-bg flex items-center justify-center shadow-soft">
-            <Wind className="w-6 h-6 text-primary-foreground" />
+            <Sparkles className="w-6 h-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-foreground">Pollutant Analysis</h1>
-            <p className="text-sm text-muted-foreground">What's in your air today</p>
+            <h1 className="text-xl font-bold text-foreground">AI AQI Forecast</h1>
+            <p className="text-sm text-muted-foreground">Predictive air quality insights</p>
           </div>
         </div>
       </div>
 
       <div className="relative z-10">
-        {/* Pie Chart */}
+        {/* AI Forecast Chart */}
+        <div className="px-6 mb-6">
+          <AQIForecastChart />
+        </div>
+
+        {/* Pie Chart - Pollution Sources */}
         <div className="px-6 mb-6">
           <PollutantPieChart />
-        </div>
-
-        {/* Pollutant Details */}
-        <div className="px-6 mb-6">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">
-            Pollutant Levels
-          </h3>
-          <div className="space-y-3">
-            {pollutantData.map((pollutant, index) => (
-              <div
-                key={pollutant.name}
-                className="card-elevated flex items-center justify-between animate-fade-in"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: pollutant.color }}
-                  />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{pollutant.name}</p>
-                    <p className="text-xs text-muted-foreground">Concentration: {pollutant.value} µg/m³</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-semibold text-foreground">{pollutant.percentage}%</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Gaseous Pollutants */}
-        <div className="px-6 mb-6">
-          <GaseousPollutants />
         </div>
 
         {/* Local Factors */}
@@ -93,14 +63,12 @@ const PollutantBreakdown = () => {
         <div className="px-6">
           <div className="card-elevated bg-secondary/50">
             <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-              <span>💡</span> Understanding Pollutants
+              <span>🤖</span> About AI Predictions
             </h4>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <strong>PM2.5</strong> are fine particles that can penetrate deep into lungs.{' '}
-              <strong>PM10</strong> are larger particles from dust and pollen.{' '}
-              <strong>NO₂</strong> primarily comes from vehicle emissions.{' '}
-              <strong>CO</strong> is from incomplete combustion, while{' '}
-              <strong>O₃</strong> forms when sunlight reacts with pollutants.
+              Our AI model analyzes current pollutant levels, historical patterns, weather 
+              forecasts, and local factors to predict AQI trends. Predictions are updated 
+              hourly for maximum accuracy.
             </p>
           </div>
         </div>
